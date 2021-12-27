@@ -1,0 +1,47 @@
+.inputting {
+    background-color: #ff9;
+}
+
+div.main {
+    margin: 2%;
+}
+
+.main p {
+    font-size: 5vw;
+    bottom: 5vw;
+}
+
+#input-area {
+    --base-size: 12vw;
+    position: fixed;
+    width: calc(var(--base-size) * 4);
+    height: calc(var(--base-size) * 3);
+    right: 20vw;
+    bottom: 20vw;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+#input-area .row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: subgrid;
+}
+
+#input-area .cell {
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    font-size: 6vw;
+    align-items: center;
+    justify-content: center;
+}
+
+#input-area .cell.road {
+    grid-column: span 2;
+}
+
+#input-area .cell.point {
+    background-color: gray;
+}
