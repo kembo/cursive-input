@@ -1,24 +1,21 @@
 "use strict";
-/**
- * 文字盤へのヒントや入力した文字列等を適宜画面に表示する
- */
-var rowTag = 'div';
-var cellTag = 'div';
-var DisplayTable = /** @class */ (function () {
-    function DisplayTable(inputArea) {
+const rowTag = 'div';
+const cellTag = 'div';
+function createPairList(base, elem, clsName, tagName, message) {
+    const coll = elem.getElementsByClassName(clsName);
+    return base.map((k, i) => [k, safelyGetFromCollection(coll, i, tagName, message(i))]);
+}
+class DisplayTable {
+    constructor(inputArea) {
         this.parent = inputArea;
-        // 行要素のタプルを取ってくる
-        var rows = collectionToTuple(nullTuple3, inputArea.getElementsByClassName('row'), rowTag, function (i) { return "Row ".concat(rowTag, " #").concat(i, " is not found"); });
-        // 行ごとにセルの長さが異なるので、`map` が使えない
-        function getCells(base, i) {
-            return collectionToTuple(base, rows[i].getElementsByClassName('cell'), cellTag, function (j) { return "Cell ".concat(cellTag, " [").concat(i, ", ").concat(j, "] is not found"); });
-        }
-        this.cells = [
-            getCells(nullTuple2, 0),
-            getCells(nullTuple3, 1),
-            getCells(nullTuple2, 2)
-        ];
+        // 行要素の取得
+        const rowList = createPairList(SPOT.slice(0, 3), inputArea, 'row', rowTag, i => `Row ${rowTag} #${i} is not found`);
+        // セルの取得
+        const cellList = rowList.reduce((ret, e, y) => {
+            return ret.concat(createPairList(e[0], e[1], 'cell', cellTag, x => `Cell ${cellTag} [${x}, ${y}] is not found`));
+        }, []);
+        // オブジェクトへの変換
+        this.cells = cellList.reduce((o, e) => { o[e[0]] = e[1]; return o; }, {});
     }
-    return DisplayTable;
-}());
+}
 //# sourceMappingURL=display.js.map

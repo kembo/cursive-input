@@ -1,9 +1,9 @@
 "use strict";
-var nullTuple2 = [null, null];
-var nullTuple3 = [null, null, null];
+const nullTuple2 = [null, null];
+const nullTuple3 = [null, null, null];
 /** パターン判定漏れチェック */
-var assertUnreachable = function (x) {
-    throw new Error("Unexpected value!! ".concat(x));
+const assertUnreachable = (x) => {
+    throw new Error(`Unexpected value!! ${x}`);
 };
 /** null チェック */
 function assertNull(obj, message) {
@@ -38,9 +38,9 @@ function safelyGetFromCollection(collection, index, tagName, message) {
     return validElementTagName(collection.item(index), tagName, message);
 }
 function collectionToTuple(base, collection, tagName, message) {
-    return base.map(function (_, i) { return safelyGetFromCollection(collection, i, tagName, typeof message === 'string'
+    return base.map((_, i) => safelyGetFromCollection(collection, i, tagName, typeof message === 'string'
         ? message
-        : message && message(i)); });
+        : message && message(i)));
 }
 /**
  *
@@ -48,12 +48,8 @@ function collectionToTuple(base, collection, tagName, message) {
  * @param vecs 任意の数の Vector2
  * @returns 各項目を fn で計算した Vector2
  */
-function calcVector2(fn) {
-    var vecs = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        vecs[_i - 1] = arguments[_i];
-    }
-    var base = [0, 0];
-    return base.map(function (_, i) { return fn.apply(void 0, vecs.map(function (v) { return v[i]; })); });
+function calcVector2(fn, ...vecs) {
+    const base = [0, 0];
+    return base.map((_, i) => fn(...vecs.map(v => v[i])));
 }
 //# sourceMappingURL=base.js.map

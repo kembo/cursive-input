@@ -7,8 +7,8 @@
 /**
  * 入力状態を保持し管理するクラス
  */
-var InputStateMachine = /** @class */ (function () {
-    function InputStateMachine(inputArea) {
+class InputStateMachine {
+    constructor(inputArea) {
         this.lastPos = null;
         this.curText = null;
         this.curLetter = null;
@@ -19,23 +19,22 @@ var InputStateMachine = /** @class */ (function () {
      * タッチした瞬間の挙動
      * @param pos タッチ座標
      */
-    InputStateMachine.prototype.touched = function (pos) {
+    touched(pos) {
         console.log("touched!");
         console.log(pos);
-    };
+    }
     /**
      * 指が動いた時の挙動
      * @param pos 指の座標
      */
-    InputStateMachine.prototype.moved = function (pos) {
+    moved(pos) {
         console.log(pos);
-    };
+    }
     /**
      * 指を離した時の挙動
      */
-    InputStateMachine.prototype.released = function () {
+    released() {
         console.log("released!");
-    };
-    return InputStateMachine;
-}());
+    }
+}
 //# sourceMappingURL=input.js.map

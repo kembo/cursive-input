@@ -10,35 +10,35 @@
  * @returns 補正された `elem` 左上を原点とする座標値
  */
 function posOfElement(touch, elem, rate) {
-    var rect = elem === null || elem === void 0 ? void 0 : elem.getBoundingClientRect();
+    const rect = elem === null || elem === void 0 ? void 0 : elem.getBoundingClientRect();
     if (typeof rate === 'number') {
         rate = [rate, rate];
     }
     if (rect && rate) {
-        rate = calcVector2(function (r, w) { return r / w; }, rate, [rect.width, rect.height]);
+        rate = calcVector2((r, w) => r / w, rate, [rect.width, rect.height]);
     }
     else {
         rate = [1, 1];
     }
-    return calcVector2(function (pos, orig, rate) { return (pos - orig) * rate; }, [touch.clientX, touch.clientY], // 元の座標
+    return calcVector2((pos, orig, rate) => (pos - orig) * rate, [touch.clientX, touch.clientY], // 元の座標
     rect ? [rect.x, rect.y] : [0, 0], // 親要素の左上の座標
     rate // 倍率
     );
 }
-window.addEventListener('load', function () {
-    var inputArea = validElementTagName(document.getElementById('input-area'), 'div', '"div#input-area" is not found.');
-    var stateMachine = new InputStateMachine(inputArea);
+window.addEventListener('load', () => {
+    const inputArea = validElementTagName(document.getElementById('input-area'), 'div', '"div#input-area" is not found.');
+    const stateMachine = new InputStateMachine(inputArea);
     function onTouchEvent(fn) {
-        return function (e) {
+        return e => {
             e.preventDefault();
             fn(e);
         };
     }
     function onTouching(fn) {
-        return onTouchEvent(function (e) { return fn(posOfElement(e.touches[0], inputArea, AREA_SIZE)); });
+        return onTouchEvent(e => fn(posOfElement(e.touches[0], inputArea, AREA_SIZE)));
     }
-    inputArea.addEventListener('touchstart', onTouching(function (p) { return stateMachine.touched(p); }));
-    inputArea.addEventListener('touchmove', onTouching(function (p) { return stateMachine.moved(p); }));
-    inputArea.addEventListener('touchend', onTouchEvent(function () { return stateMachine.released(); }));
+    inputArea.addEventListener('touchstart', onTouching((p) => stateMachine.touched(p)));
+    inputArea.addEventListener('touchmove', onTouching((p) => stateMachine.moved(p)));
+    inputArea.addEventListener('touchend', onTouchEvent(() => stateMachine.released()));
 });
 //# sourceMappingURL=main.js.map
