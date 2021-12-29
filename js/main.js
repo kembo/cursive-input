@@ -25,5 +25,17 @@ function posOfElement(touch, elem, size) {
 window.addEventListener('load', function () {
     var inputArea = validElementTagName(document.getElementById('input-area'), 'div', '"div#input-area" is not found.');
     var stateMachine = new InputStateMachine(inputArea);
+    function onTouchEvent(fn) {
+        return function (e) {
+            e.preventDefault();
+            fn(e);
+        };
+    }
+    function onTouching(fn) {
+        return onTouchEvent(function (e) { return fn(posOfElement(e.touches[0], inputArea, AREA_SIZE)); });
+    }
+    inputArea.addEventListener('touchstart', onTouching(function (p) { return stateMachine.touched(p); }));
+    inputArea.addEventListener('touchmove', onTouching(function (p) { return stateMachine.moved(p); }));
+    inputArea.addEventListener('touchend', onTouchEvent(function () { return stateMachine.released(); }));
 });
 //# sourceMappingURL=main.js.map

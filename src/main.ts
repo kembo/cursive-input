@@ -26,4 +26,18 @@ window.addEventListener('load', () => {
     '"div#input-area" is not found.'
   );
   const stateMachine = new InputStateMachine(inputArea);
+
+  type TouchEventFunction = (e: TouchEvent) => void;
+  function onTouchEvent(fn: ((e: TouchEvent) => void)): TouchEventFunction {
+      return e => {
+          e.preventDefault();
+          fn(e);
+      }
+  }
+  function onTouching(fn: ((pos: Vector2) => void)): TouchEventFunction {
+      return onTouchEvent(e => fn(posOfElement(e.touches[0], inputArea, AREA_SIZE)));
+  }
+  inputArea.addEventListener('touchstart', onTouching( (p) => stateMachine.touched(p)));
+  inputArea.addEventListener('touchmove' , onTouching( (p) => stateMachine.moved(p)  ));
+  inputArea.addEventListener('touchend'  , onTouchEvent(() => stateMachine.released()));
 });

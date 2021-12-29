@@ -17,6 +17,7 @@ function assertNull<T>(obj: T | null, message?: string): T {
   if (obj === null) { throw new Error(message); }
   return obj;
 }
+type Nullable<T> = T | null;
 
 
 // DOM 関連
