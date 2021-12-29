@@ -9,31 +9,38 @@
  */
 class InputStateMachine {
     constructor(inputArea) {
-        this.lastPos = null;
         this.curText = null;
         this.curLetter = null;
         this.lastLetter = null;
         this.table = new DisplayTable(inputArea);
+        this.state = StartState;
     }
     /**
      * タッチした瞬間の挙動
      * @param pos タッチ座標
      */
     touched(pos) {
-        console.log("touched!");
-        console.log(pos);
+        if (!(this.state instanceof PreTouchState)) {
+            this.state = StartState;
+        }
+        this.state = this.state.next(pos);
     }
     /**
      * 指が動いた時の挙動
      * @param pos 指の座標
      */
     moved(pos) {
-        console.log(pos);
+        if (this.state.lastSpot === null) {
+            return;
+        }
+        this.state = this.state.next(pos);
+        console.log(detectSpot(pos));
     }
     /**
      * 指を離した時の挙動
      */
     released() {
+        this.state = this.state.release();
         console.log("released!");
     }
 }

@@ -8,8 +8,7 @@
  * 入力状態を保持し管理するクラス
  */
 class InputStateMachine {
-  state: undefined;
-  lastPos: Nullable<Vector2> = null;
+  state: State;
 
   readonly table: DisplayTable;
   curText: Nullable<string> = null;
@@ -18,6 +17,7 @@ class InputStateMachine {
 
   constructor(inputArea: HTMLElement) {
     this.table = new DisplayTable(inputArea);
+    this.state = StartState;
   }
 
   /**
@@ -25,20 +25,25 @@ class InputStateMachine {
    * @param pos タッチ座標
    */
   public touched(pos: Vector2): void {
-    console.log("touched!");
-    console.log(pos);
+    if (!(this.state instanceof PreTouchState)) {
+      this.state = StartState;
+    }
+    this.state = this.state.next(pos);
   }
   /**
    * 指が動いた時の挙動
    * @param pos 指の座標
    */
   public moved(pos: Vector2): void {
-    console.log(pos);
+    if (this.state.lastSpot === null) { return; }
+    this.state = this.state.next(pos);
+    console.log(detectSpot(pos));
   }
   /**
    * 指を離した時の挙動
    */
   public released(): void {
+    this.state = this.state.release();
     console.log("released!");
   }
 }
