@@ -56,6 +56,4 @@ function calcVector2(fn) {
     var base = [0, 0];
     return base.map(function (_, i) { return fn.apply(void 0, vecs.map(function (v) { return v[i]; })); });
 }
-/** 入力エリアのサイズは 4x3 マスで考える */
-var AREA_SIZE = [4, 3];
 //# sourceMappingURL=base.js.map
