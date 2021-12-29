@@ -2,7 +2,7 @@
 
 <head>
   <link rel="stylesheet" type="text/css" href="./input.css">
-  <script src="/js/const.js"></script>
+  <script src="/js/base.js"></script>
   <script src="/js/display.js"></script>
   <script src="/js/state.js"></script>
   <script src="/js/input.js"></script>
@@ -11,7 +11,11 @@
 
 <body>
   <div class="main">
-    <p><span id="text-box"></span> <span id="inputting-box" class="inputting"></span></p>
+    <p id="input-text-box">
+      <span id="input-text"></span>
+      <span id="latest-text" class="latest"></span>
+      <span id="inputting-letter" class="inputting"></span>
+    </p>
   </div>
   <div id="input-area">
     <div class="row">
