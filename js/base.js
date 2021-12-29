@@ -1,6 +1,4 @@
 "use strict";
-const nullTuple2 = [null, null];
-const nullTuple3 = [null, null, null];
 /** パターン判定漏れチェック */
 const assertUnreachable = (x) => {
     throw new Error(`Unexpected value!! ${x}`);
@@ -36,11 +34,6 @@ function validElementTagName(element, tagName, message) {
 }
 function safelyGetFromCollection(collection, index, tagName, message) {
     return validElementTagName(collection.item(index), tagName, message);
-}
-function collectionToTuple(base, collection, tagName, message) {
-    return base.map((_, i) => safelyGetFromCollection(collection, i, tagName, typeof message === 'string'
-        ? message
-        : message && message(i)));
 }
 /**
  *

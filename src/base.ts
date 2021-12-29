@@ -7,8 +7,6 @@ interface ReadonlyArray<T> {
     /** tuple のための拡張 */
     map<U>(callbackfn: (value: T, index: number, tuple: T[] | [T]) => U, thisArg?: any): { [K in keyof this]: U }
 }
-const nullTuple2: readonly [null, null] = [null, null];
-const nullTuple3: readonly [null, null, null] = [null, null, null];
 /** パターン判定漏れチェック */
 const assertUnreachable = (x: never): never => {
     throw new Error(`Unexpected value!! ${x}`);
@@ -51,18 +49,6 @@ function safelyGetFromCollection<K extends keyof HTMLElementTagNameMap>(
   collection: HTMLCollection, index: number, tagName: K, message?: string
 ): HTMLElementTagNameMap[K] {
   return validElementTagName(collection.item(index), tagName, message);
-}
-function collectionToTuple<T extends ReadonlyArray<any> ,K extends keyof HTMLElementTagNameMap>(
-  base: T, collection: HTMLCollection, tagName: K, message?: string | ((i: number) => string)
-): { [I in keyof T]: HTMLElementTagNameMap[K] } {
-  return base.map(
-    (_, i) => safelyGetFromCollection(
-      collection, i, tagName,
-      typeof message === 'string'
-        ? message
-        : message && message(i)
-    )
-  );
 }
 
 
