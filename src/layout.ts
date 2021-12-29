@@ -6,27 +6,14 @@
 const AREA_SIZE: Vector2 = [4, 3];
 
 /** 画面上のセルの位置を示す列挙型の値 */
-const SPOT = {
-  UPPER: {
-    LEFT: 'UPPER_LEFT',
-    RIGHT: 'UPPER_RIGHT'
-  },
-  LOWER: {
-    LEFT: 'LOWER_LEFT',
-    RIGHT: 'LOWER_RIGHT'
-  },
-  MIDDLE: {
-    LEFT: 'LEFT',
-    RIGHT: 'RIGHT',
-    CENTER: 'CENTER'
-  },
-  OVER_SIDE: {
-    LEFT: 'OVER_LEFT',
-    RIGHT: 'OVER_RIGHT'
-  }
-} as const;
+const SPOT = [
+  ['UPPER_LEFT', 'UPPER_RIGHT'],
+  ['LEFT', 'CENTER', 'RIGHT'],
+  ['LOWER_LEFT', 'LOWER_RIGHT'],
+  ['OVER_LEFT', 'OVER_RIGHT']
+] as const;
 /** 画面上のセルの位置を示す列挙型 */
-type Spot = DoubleLayerEnum<typeof SPOT>;
+type Spot = typeof SPOT[number][number];
 
 /**
  * detectSpot
@@ -35,22 +22,23 @@ type Spot = DoubleLayerEnum<typeof SPOT>;
  * @returns 入力領域のセル
  */
 function detectSpot(pos: Vector2, noCenter?: boolean): Spot {
-  const [x, y] = pos;
-  if (x < 0) { return SPOT.OVER_SIDE.LEFT; }
-  if (x >= 4) { return SPOT.OVER_SIDE.RIGHT; }
+  let [x, y] = pos;
+  if (x < 0) { return SPOT[3][0]; }
+  if (x >= 4) { return SPOT[3][1]; }
 
-  const area =
-    y < 1 ? SPOT.UPPER
-    : y >= 2 ? SPOT.LOWER
-    : SPOT.MIDDLE;
-
-  if (area === SPOT.MIDDLE && !noCenter) {
-    if (x < 1) { return area.LEFT; }
-    if (x >= 3) { return area.RIGHT; }
-    return area.CENTER;
+  if (y < 1) { y = 0; }
+  else if (y >= 2) { y = 2; }
+  else {
+    if (noCenter) {
+      if (x < 2) { return SPOT[1][0]; }
+      return SPOT[1][2];
+    }
+    if (x < 1) { return SPOT[1][0]; }
+    if (x >= 3) { return SPOT[1][2]; }
+    return SPOT[1][1];
   }
-  if (x < 2) { return area.LEFT; }
-  return area.RIGHT;
+  if (x < 2) { return SPOT[y][0]; }
+  return SPOT[y][1];
 }
 
 

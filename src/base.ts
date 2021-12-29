@@ -3,8 +3,6 @@
  */
 // 汎用関数類
 type Nullable<T> = T | null;
-type DoubleLayerEnum<T extends { [key: string]: {[subKey: string]: string | number} }> =
-  keyof T extends infer K ? K extends keyof T ? T[K][keyof T[K]] : never : never;
 interface ReadonlyArray<T> {
     /** tuple のための拡張 */
     map<U>(callbackfn: (value: T, index: number, tuple: T[] | [T]) => U, thisArg?: any): { [K in keyof this]: U }
