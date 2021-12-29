@@ -4,23 +4,26 @@
  * 入力値を `input` 側に適当な形に変換して渡す
  */
 /**
- *
  * @param touch タッチイベント時のタッチ情報
  * @param elem 座標範囲の基準となる親要素
- * @param size elem の縦横がこの値になるように座標値を補正する
+ * @param rate elem の縦横がこの値になるように座標値を補正する
  * @returns 補正された `elem` 左上を原点とする座標値
  */
-function posOfElement(touch, elem, size) {
-    var pos = [touch.clientX, touch.clientY];
-    if (!(elem && size)) {
-        return pos;
+function posOfElement(touch, elem, rate) {
+    var rect = elem === null || elem === void 0 ? void 0 : elem.getBoundingClientRect();
+    if (typeof rate === 'number') {
+        rate = [rate, rate];
     }
-    var rect = elem.getBoundingClientRect();
-    if (typeof size === 'number') {
-        size = [size, size];
+    if (rect && rate) {
+        rate = calcVector2(function (r, w) { return r / w; }, rate, [rect.width, rect.height]);
     }
-    var rate = [size[0] / rect.width, size[1] / rect.height];
-    return pos.map(function (a, i) { return a * rate[i]; });
+    else {
+        rate = [1, 1];
+    }
+    return calcVector2(function (pos, orig, rate) { return (pos - orig) * rate; }, [touch.clientX, touch.clientY], // 元の座標
+    rect ? [rect.x, rect.y] : [0, 0], // 親要素の左上の座標
+    rate // 倍率
+    );
 }
 window.addEventListener('load', function () {
     var inputArea = validElementTagName(document.getElementById('input-area'), 'div', '"div#input-area" is not found.');

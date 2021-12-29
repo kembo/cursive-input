@@ -2,6 +2,7 @@
  * 共有すべきデータ型や定数
  */
 // 汎用関数類
+type Nullable<T> = T | null;
 interface ReadonlyArray<T> {
     /** tuple のための拡張 */
     map<U>(callbackfn: (value: T, index: number, tuple: T[] | [T]) => U, thisArg?: any): { [K in keyof this]: U }
@@ -17,7 +18,7 @@ function assertNull<T>(obj: T | null, message?: string): T {
   if (obj === null) { throw new Error(message); }
   return obj;
 }
-type Nullable<T> = T | null;
+
 
 
 // DOM 関連
@@ -68,6 +69,16 @@ function collectionToTuple<T extends ReadonlyArray<any> ,K extends keyof HTMLEle
 // その他
 /** 2次元ベクトル */
 type Vector2 = readonly [number, number];
+/**
+ *
+ * @param fn 各項目の演算
+ * @param vecs 任意の数の Vector2
+ * @returns 各項目を fn で計算した Vector2
+ */
+function calcVector2(fn: (...args: number[]) => number, ...vecs: Vector2[]): Vector2 {
+  const base: Vector2 = [0, 0];
+  return base.map((_, i) => fn(...vecs.map(v => v[i])))
+}
 
 /** 入力エリアのサイズは 4x3 マスで考える */
 const AREA_SIZE:Vector2 = [4, 3];
