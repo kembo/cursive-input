@@ -14,6 +14,7 @@ const SPOT = [
 ] as const;
 /** 画面上のセルの位置を示す列挙型 */
 type Spot = typeof SPOT[number][number];
+type InsideSpot = typeof SPOT[0 | 1 | 2][number];
 
 /**
  * detectSpot
