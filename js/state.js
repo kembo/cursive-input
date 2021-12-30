@@ -5,6 +5,9 @@ class State {
     constructor(nextStates) {
         this.nextStates = nextStates;
     }
+    _going(to, spot) {
+        return to.comming(this, spot);
+    }
     /**
      * Spot から状態遷移を判定する
      * @param spot 所在地
@@ -15,7 +18,7 @@ class State {
             return this;
         }
         console.debug(spot);
-        const nextSt = this.nextStates[spot];
+        const nextSt = this.nextStates.get(spot);
         if (nextSt === undefined) {
             return this.release();
         }
@@ -23,7 +26,7 @@ class State {
             this.lastSpot = spot;
             return this;
         }
-        return nextSt.comming(this, spot);
+        return this._going(nextSt, spot);
     }
     /**
      * 座標から状態遷移を判定する
@@ -58,15 +61,22 @@ class OnScreenState extends State {
 /** タッチ直後 */
 class JustTouchedState extends OnScreenState {
 }
-const RightStartState = new JustTouchedState({});
+const RightStartState = new JustTouchedState(new Map());
 /** 入力前の待機状態 */
 class PreTouchState extends State {
-    constructor() {
-        super(...arguments);
+    constructor(nextStates) {
+        super(nextStates);
         this.lastSpot = null;
+        this.nextStates = nextStates;
     }
     next(pos) {
-        return this._nextBySpot(detectSpot(pos, true));
+        const spot = detectSpot(pos, true);
+        console.debug(spot);
+        const nextSt = this.nextStates.get(spot);
+        if (!nextSt) {
+            return this;
+        }
+        return nextSt.comming(this, detectSpot(pos, false));
     }
     comming(prev) {
         console.debug(this);
@@ -76,8 +86,8 @@ class PreTouchState extends State {
         return this;
     }
 }
-const StartState = new PreTouchState({
-    RIGHT: RightStartState
-});
+const StartState = new PreTouchState(new Map([
+    ['RIGHT', RightStartState]
+]));
 State.defaultState = StartState;
 //# sourceMappingURL=state.js.map
