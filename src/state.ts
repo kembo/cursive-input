@@ -14,7 +14,7 @@ abstract class State {
   /** 表示用オブジェクト */
   static display: DisplayTable;
   /** 最終位置 */
-  lastSpot: Nullable<Spot> = null;
+  lastSpot?: Nullable<Spot>;
   /** 次の状態遷移を示すための辞書オブジェクト */
   protected nextStates: StateChain;
 
@@ -29,6 +29,7 @@ abstract class State {
    */
   protected _nextBySpot(spot: Spot): State {
     if (spot === this.lastSpot) { return this; }
+    console.debug(spot);
     const nextSt = this.nextStates[spot];
     if (nextSt === undefined) { return this.release(); }
     if (nextSt === null) {
@@ -63,21 +64,44 @@ abstract class State {
    */
   public comming(prev: State, spot: Spot): typeof this {
     this.lastSpot = spot;
+    console.debug(this);
     return this;
   }
 }
 
 
+/** 指が画面上にある時の State */
+class OnScreenState extends State {
+  lastSpot?: Spot;
+}
+
+
+/** タッチ直後 */
+class JustTouchedState extends OnScreenState {
+}
+
+const RightStartState = new JustTouchedState({})
+
+
 /** 入力前の待機状態 */
 class PreTouchState extends State {
+  readonly lastSpot: null = null;
+
   public next(pos: Vector2): State {
     return this._nextBySpot(detectSpot(pos, true));
   }
 
   public comming(prev?: State): typeof this {
+    console.debug(this);
     return this
+  }
+
+  public release(): PreTouchState {
+    return this;
   }
 }
 
-const StartState = new PreTouchState({});
+const StartState = new PreTouchState({
+  RIGHT: RightStartState
+});
 State.defaultState = StartState;

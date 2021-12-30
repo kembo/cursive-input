@@ -3,8 +3,6 @@
 /** 入力状態を表すクラス */
 class State {
     constructor(nextStates) {
-        /** 最終位置 */
-        this.lastSpot = null;
         this.nextStates = nextStates;
     }
     /**
@@ -16,6 +14,7 @@ class State {
         if (spot === this.lastSpot) {
             return this;
         }
+        console.debug(spot);
         const nextSt = this.nextStates[spot];
         if (nextSt === undefined) {
             return this.release();
@@ -49,18 +48,36 @@ class State {
      */
     comming(prev, spot) {
         this.lastSpot = spot;
+        console.debug(this);
         return this;
     }
 }
+/** 指が画面上にある時の State */
+class OnScreenState extends State {
+}
+/** タッチ直後 */
+class JustTouchedState extends OnScreenState {
+}
+const RightStartState = new JustTouchedState({});
 /** 入力前の待機状態 */
 class PreTouchState extends State {
+    constructor() {
+        super(...arguments);
+        this.lastSpot = null;
+    }
     next(pos) {
         return this._nextBySpot(detectSpot(pos, true));
     }
     comming(prev) {
+        console.debug(this);
+        return this;
+    }
+    release() {
         return this;
     }
 }
-const StartState = new PreTouchState({});
+const StartState = new PreTouchState({
+    RIGHT: RightStartState
+});
 State.defaultState = StartState;
 //# sourceMappingURL=state.js.map
