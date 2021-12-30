@@ -11,7 +11,6 @@ class State {
         return this.nextBySpot(detectSpot(pos));
     }
     nextBySpot(spot) {
-        var _a;
         if (spot === this.lastSpot) {
             return this;
         }
@@ -19,10 +18,14 @@ class State {
         if (nextSt === undefined) {
             return State.defaultState;
         }
-        return (_a = nextSt === null || nextSt === void 0 ? void 0 : nextSt.comming(this, spot)) !== null && _a !== void 0 ? _a : this;
+        if (nextSt === null) {
+            this.lastSpot = spot;
+            return this;
+        }
+        return nextSt.comming(this, spot);
     }
     release() {
-        return State.defaultState;
+        return State.defaultState.comming();
     }
     comming(prev, spot) {
         this.lastSpot = spot;
@@ -32,6 +35,9 @@ class State {
 class PreTouchState extends State {
     next(pos) {
         return this.nextBySpot(detectSpot(pos, true));
+    }
+    comming(prev) {
+        return this;
     }
 }
 const StartState = new PreTouchState({});

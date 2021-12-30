@@ -6,7 +6,8 @@ type StateChain = { [key in Spot]?: Nullable<State> };
 abstract class State {
   lastSpot: Nullable<Spot> = null;
   protected nextStates: StateChain;
-  static defaultState: State;
+  static defaultState: PreTouchState;
+  static display: DisplayTable;
 
   constructor(nextStates: StateChain) {
     this.nextStates = nextStates;
@@ -20,14 +21,18 @@ abstract class State {
     if (spot === this.lastSpot) { return this; }
     const nextSt = this.nextStates[spot];
     if (nextSt === undefined) { return State.defaultState; }
-    return nextSt?.comming(this, spot) ?? this;
+    if (nextSt === null) {
+      this.lastSpot = spot;
+      return this;
+    }
+    return nextSt.comming(this, spot);
   }
 
-  public release(): State {
-    return State.defaultState;
+  public release(): PreTouchState {
+    return State.defaultState.comming();
   }
 
-  public comming(prev: State, spot: Spot): State {
+  public comming(prev: State, spot: Spot): typeof this {
     this.lastSpot = spot;
     return this;
   }
@@ -36,6 +41,10 @@ abstract class State {
 class PreTouchState extends State {
   public next(pos: Vector2): State {
     return this.nextBySpot(detectSpot(pos, true));
+  }
+
+  public comming(prev?: State): typeof this {
+    return this
   }
 }
 
