@@ -27,18 +27,23 @@ function posOfElement(touch, elem, rate) {
 }
 window.addEventListener('load', () => {
     const inputArea = validElementTagName(document.getElementById('input-area'), 'div', '"div#input-area" is not found.');
-    const stateMachine = new InputStateMachine(inputArea);
+    function posOfArea(touch) {
+        return posOfElement(touch, inputArea, AREA_SIZE);
+    }
+    State.display = new DisplayTable(inputArea);
+    let state = StartState.comming();
     function onTouchEvent(fn) {
         return e => {
             e.preventDefault();
-            fn(e);
+            state = fn(e, state);
         };
     }
     function onTouching(fn) {
-        return onTouchEvent(e => fn(posOfElement(e.touches[0], inputArea, AREA_SIZE)));
+        return onTouchEvent((e, s) => { var _a, _b; return (_b = (_a = fn(s, s instanceof PreTouchState)) === null || _a === void 0 ? void 0 : _a.next(posOfArea(e.touches[0]))) !== null && _b !== void 0 ? _b : s; });
     }
-    inputArea.addEventListener('touchstart', onTouching((p) => stateMachine.touched(p)));
-    inputArea.addEventListener('touchmove', onTouching((p) => stateMachine.moved(p)));
-    inputArea.addEventListener('touchend', onTouchEvent(() => stateMachine.released()));
+    ;
+    inputArea.addEventListener('touchstart', onTouching((s, start) => start ? s : s.release()));
+    inputArea.addEventListener('touchmove', onTouching((s, start) => start ? null : s));
+    inputArea.addEventListener('touchend', onTouchEvent((_e, s) => s.release()));
 });
 //# sourceMappingURL=main.js.map

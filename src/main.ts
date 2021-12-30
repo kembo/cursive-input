@@ -30,19 +30,23 @@ window.addEventListener('load', () => {
     document.getElementById('input-area'), 'div',
     '"div#input-area" is not found.'
   );
-  const stateMachine = new InputStateMachine(inputArea);
+  function posOfArea(touch: Touch) {
+    return posOfElement(touch, inputArea, AREA_SIZE);
+  }
+  State.display = new DisplayTable(inputArea);
+  let state: State = StartState.comming();
 
   type TouchEventFunction = (e: TouchEvent) => void;
-  function onTouchEvent(fn: ((e: TouchEvent) => void)): TouchEventFunction {
-      return e => {
-          e.preventDefault();
-          fn(e);
-      }
+  function onTouchEvent(fn: ((e: TouchEvent, s: State) => State)): TouchEventFunction {
+    return e => {
+      e.preventDefault();
+      state = fn(e, state);
+    }
   }
-  function onTouching(fn: ((pos: Vector2) => void)): TouchEventFunction {
-      return onTouchEvent(e => fn(posOfElement(e.touches[0], inputArea, AREA_SIZE)));
-  }
-  inputArea.addEventListener('touchstart', onTouching( (p) => stateMachine.touched(p)));
-  inputArea.addEventListener('touchmove' , onTouching( (p) => stateMachine.moved(p)  ));
-  inputArea.addEventListener('touchend'  , onTouchEvent(() => stateMachine.released()));
+  function onTouching(fn: ((s: State, touchStart: boolean) => Nullable<State>)) {
+    return onTouchEvent((e, s) => fn(s, s instanceof PreTouchState)?.next(posOfArea(e.touches[0])) ?? s);
+  };
+  inputArea.addEventListener('touchstart', onTouching((s, start) => start ? s : s.release()));
+  inputArea.addEventListener('touchmove', onTouching((s, start) => start ? null : s));
+  inputArea.addEventListener('touchend', onTouchEvent((_e, s) => s.release()));
 });
