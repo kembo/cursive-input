@@ -8,14 +8,12 @@ function createPairList(base, elem, clsName, tagName, message) {
 class DisplayTable {
     constructor(inputArea) {
         this.parent = inputArea;
-        // 行要素の取得
-        const rowList = createPairList(SPOT.slice(0, 3), inputArea, 'row', rowTag, i => `Row ${rowTag} #${i} is not found`);
-        // セルの取得
-        const cellList = rowList.reduce((ret, e, y) => {
-            return ret.concat(createPairList(e[0], e[1], 'cell', cellTag, x => `Cell ${cellTag} [${x}, ${y}] is not found`));
-        }, []);
-        // オブジェクトへの変換
-        this.cells = cellList.reduce((o, e) => { o[e[0]] = e[1]; return o; }, {});
+        this.cells = new Map(INSIDE_SPOT.map(spot => {
+            const coll = inputArea.getElementsByClassName('row');
+            const row = safelyGetFromCollection(coll, spot[1], rowTag);
+            const cells = row.getElementsByClassName('cell');
+            return [spot, safelyGetFromCollection(cells, spot[0], cellTag)];
+        }));
     }
 }
 //# sourceMappingURL=display.js.map

@@ -6,15 +6,15 @@
 const AREA_SIZE: Vector2 = [4, 3];
 
 /** 画面上のセルの位置を示す列挙型の値 */
-const SPOT = [
-  ['UPPER_LEFT', 'UPPER_RIGHT'],
-  ['LEFT', 'CENTER', 'RIGHT'],
-  ['LOWER_LEFT', 'LOWER_RIGHT'],
-  ['OVER_LEFT', 'OVER_RIGHT']
+const INSIDE_SPOT = [
+  [0, 0], [1, 0],
+  [0, 1], [1, 1], [2, 1],
+  [0, 2], [1, 2],
 ] as const;
+const SPOT = [...INSIDE_SPOT, [-1, 1], [3, 1]] as const;
 /** 画面上のセルの位置を示す列挙型 */
-type Spot = typeof SPOT[number][number];
-type InsideSpot = typeof SPOT[0 | 1 | 2][number];
+type Spot = typeof SPOT[number];
+type InsideSpot = typeof INSIDE_SPOT[number];
 
 /**
  * detectSpot
@@ -23,23 +23,24 @@ type InsideSpot = typeof SPOT[0 | 1 | 2][number];
  * @returns 入力領域のセル
  */
 function detectSpot(pos: Vector2, noCenter?: boolean): Spot {
-  let [x, y] = pos;
-  if (x < 0) { return SPOT[3][0]; }
-  if (x >= 4) { return SPOT[3][1]; }
+  const [x, y] = pos;
+  if (x < 0) { return [-1, 1]; }
+  if (x >= 4) { return [3, 1]; }
 
-  if (y < 1) { y = 0; }
-  else if (y >= 2) { y = 2; }
+  let py: 0 | 2;
+  if (y < 1) { py = 0; }
+  else if (y >= 2) { py = 2; }
   else {
     if (noCenter) {
-      if (x < 2) { return SPOT[1][0]; }
-      return SPOT[1][2];
+      if (x < 2) { return [0, 1]; }
+      return [2, 1];
     }
-    if (x < 1) { return SPOT[1][0]; }
-    if (x >= 3) { return SPOT[1][2]; }
-    return SPOT[1][1];
+    if (x < 1) { return [0, 1]; }
+    if (x >= 3) { return [2, 1]; }
+    return [1, 1];
   }
-  if (x < 2) { return SPOT[y][0]; }
-  return SPOT[y][1];
+  if (x < 2) { return [0, py]; }
+  return [1, py];
 }
 
 

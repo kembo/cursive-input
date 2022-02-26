@@ -5,12 +5,12 @@
 /** 入力エリアのサイズは 4x3 マスで考える */
 const AREA_SIZE = [4, 3];
 /** 画面上のセルの位置を示す列挙型の値 */
-const SPOT = [
-    ['UPPER_LEFT', 'UPPER_RIGHT'],
-    ['LEFT', 'CENTER', 'RIGHT'],
-    ['LOWER_LEFT', 'LOWER_RIGHT'],
-    ['OVER_LEFT', 'OVER_RIGHT']
+const INSIDE_SPOT = [
+    [0, 0], [1, 0],
+    [0, 1], [1, 1], [2, 1],
+    [0, 2], [1, 2],
 ];
+const SPOT = [...INSIDE_SPOT, [-1, 1], [3, 1]];
 /**
  * detectSpot
  * @param pos ページ上で1マス分を1、領域左上を0とする座標
@@ -18,37 +18,38 @@ const SPOT = [
  * @returns 入力領域のセル
  */
 function detectSpot(pos, noCenter) {
-    let [x, y] = pos;
+    const [x, y] = pos;
     if (x < 0) {
-        return SPOT[3][0];
+        return [-1, 1];
     }
     if (x >= 4) {
-        return SPOT[3][1];
+        return [3, 1];
     }
+    let py;
     if (y < 1) {
-        y = 0;
+        py = 0;
     }
     else if (y >= 2) {
-        y = 2;
+        py = 2;
     }
     else {
         if (noCenter) {
             if (x < 2) {
-                return SPOT[1][0];
+                return [0, 1];
             }
-            return SPOT[1][2];
+            return [2, 1];
         }
         if (x < 1) {
-            return SPOT[1][0];
+            return [0, 1];
         }
         if (x >= 3) {
-            return SPOT[1][2];
+            return [2, 1];
         }
-        return SPOT[1][1];
+        return [1, 1];
     }
     if (x < 2) {
-        return SPOT[y][0];
+        return [0, py];
     }
-    return SPOT[y][1];
+    return [1, py];
 }
 //# sourceMappingURL=layout.js.map

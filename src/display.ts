@@ -17,20 +17,15 @@ function createPairList<T, K extends keyof HTMLElementTagNameMap>(
 
 class DisplayTable {
   parent: HTMLElement;
-  readonly cells: Readonly<{ [key in InsideSpot]: CellElement }>;
+  readonly cells: ReadonlyMap<InsideSpot, CellElement>;
 
   constructor(inputArea: HTMLElement) {
     this.parent = inputArea;
-    // 行要素の取得
-    const rowList = createPairList(
-      SPOT.slice(0, 3) as ReadonlyArray<ReadonlyArray<InsideSpot>>,
-      inputArea, 'row', rowTag, i => `Row ${rowTag} #${i} is not found`
-    );
-    // セルの取得
-    const cellList = rowList.reduce((ret, e: [ReadonlyArray<InsideSpot>, RowElement], y: number) => {
-      return ret.concat(createPairList(e[0], e[1], 'cell', cellTag, x => `Cell ${cellTag} [${x}, ${y}] is not found`));
-    }, [] as ReadonlyArray<[InsideSpot, CellElement]>)
-    // オブジェクトへの変換
-    this.cells = cellList.reduce((o, e) => { o[e[0]] = e[1]; return o;}, {} as { [key in InsideSpot]: CellElement })
+    this.cells = new Map(INSIDE_SPOT.map(spot => {
+      const coll = inputArea.getElementsByClassName('row');
+      const row = safelyGetFromCollection(coll, spot[1], rowTag);
+      const cells = row.getElementsByClassName('cell');
+      return [spot, safelyGetFromCollection(cells, spot[0], cellTag)];
+    }));
   }
 }
